@@ -32,7 +32,8 @@ def register_user():
     user_exist = Users.query.filter_by(email = email).first() is not None
 
     if user_exist:
-        abort(409)
+        #abort(409)
+        return jsonify({"msg": "User exists"}), 401
 
     hashed_password = bcrypt.generate_password_hash(password)
     new_user = Users(name=name,email=email, password = hashed_password)
@@ -60,10 +61,10 @@ def login_user():
     user = Users.query.filter_by(email=email).first()
 
     if user is None:
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"msg": "User does not exist"}), 401
 
     if not bcrypt.check_password_hash(user.password, password):
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"msg": "incorrect password"}), 401
 
     #session["user_id"] = user.id
 
@@ -73,7 +74,8 @@ def login_user():
         "id": user.id,
         "email": user.email,
         "adm": user.adm,
-        "token": access_token
+        "token": access_token,
+        "status": 'success'
     })
 
 
