@@ -131,12 +131,14 @@ def update_images():
             if q != None:
                 cur.execute('UPDATE projects SET photos = (photos||?|| ?) WHERE id = ?', (',', image, i))
                 conn.commit()
-                return jsonify({"data": "update sucessfullll"})
+                return jsonify({"data": "update sucessfullll",
+                                "status": 'success'})
 
             if q == None:
                 cur.execute('UPDATE projects SET photos = ? WHERE id = ?', (image, id))
                 conn.commit()
-                return jsonify({"data": "update sucessful"})
+                return jsonify({"data": "update sucessful",
+                                "status": 'success'})
 
 
 
