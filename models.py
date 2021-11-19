@@ -25,3 +25,4 @@ class Agenda(db.Model):
     documents = db.Column(db.TEXT)
     asname = db.Column(db.TEXT)
     picture = db.Column(db.TEXT)
+
