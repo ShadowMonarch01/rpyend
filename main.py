@@ -110,7 +110,8 @@ def create_Project():
         "info":the_info,
         "name":new_project.name,
         "details": new_project.details,
-        "id": new_project.id
+        "id": new_project.id,
+        "status": 'success'
     })
 #Upload image
 @app.route('/uploadimage',methods =['POST'])
