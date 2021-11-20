@@ -173,16 +173,32 @@ def update_pdfs():
 
 
 
-#returns all projects
+#returns all project names and details
 @app.route('/getprojects',methods =['GET'])
 def get_articles():
-    b2 = cur.execute('SELECT * FROM projects')
+    b2 = cur.execute('SELECT id,name,details FROM projects')
     ls = []
-    for i in b2:
-        ls.append(i)
 
+    for i in b2:
+         ls.append({"id":i[0],"name":i[1],"details":i[2]})
     print(ls)
     return jsonify({"data": ls})
+
+#returns all info
+@app.route('/getprojectinfo',methods =['GET'])
+def get_info():
+    id = request.json["id"]
+    i = int(id)
+    b2=cur.execute('SELECT documents,photos FROM projects WHERE id="%s"'%(i))
+    ls = []
+    for j in b2:
+        for i in j:
+            ls.append(i)
+        r = ls[0]
+        t = ls[1]
+        print(ls)
+        return jsonify({"documents": r,
+                        "images":t})
 
 
 if __name__ == '__main__':
