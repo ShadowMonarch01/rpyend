@@ -212,7 +212,7 @@ def get_articles():
     return jsonify({"data": ls})
 
 #returns all info
-@app.route('/getprojectimgs',methods =['GET'])
+@app.route('/getprojectimgs',methods =['POST'])
 def get_imgs():
     id = request.json["id"]
     i = int(id)
@@ -238,7 +238,7 @@ def get_imgs():
 
     return jsonify({"data":ls})
 
-@app.route('/getprojectdocs',methods =['GET'])
+@app.route('/getprojectdocs',methods =['POST'])
 def get_docs():
     id = request.json["id"]
     i = int(id)
@@ -264,7 +264,7 @@ def get_docs():
     return jsonify({"data": ls})
 
 
-@app.route('/getprojecttask', methods=['GET'])
+@app.route('/getprojecttask', methods=['POST'])
 def get_tasks():
     id = request.json["id"]
     i = int(id)
