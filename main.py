@@ -130,7 +130,7 @@ def update_images():
         for q in et:
             print(q)
             if q != None:
-                cur.execute('UPDATE projects SET photos = (photos||?|| ?) WHERE id = ?', (',', image, i))
+                cur.execute('UPDATE projects SET photos = (?|| ?||photos) WHERE id = ?', (image,',', i))
                 conn.commit()
                 return jsonify({"data": "update sucessfullll",
                                 "status": 'success'})
@@ -143,7 +143,7 @@ def update_images():
 
 
 
-#Upload image
+#Upload documents
 @app.route('/pdfupload',methods =['POST'])
 def update_pdfs():
     id = request.json["id"]
@@ -160,18 +160,44 @@ def update_pdfs():
         for q in et:
             print(q)
             if q != None:
-                cur.execute('UPDATE projects SET documents = (documents||?|| ?) WHERE id = ?', (',', documents, i))
+                cur.execute('UPDATE projects SET documents = (?|| ?||documents) WHERE id = ?', (documents,',', i))
                 conn.commit()
                 return jsonify({"data": "update sucessfullll"})
 
             if q == None:
                 cur.execute('UPDATE projects SET documents = ? WHERE id = ?', (documents, id))
                 conn.commit()
-                return jsonify({"data": "update sucessful"})
+                return jsonify({"data": "update sucessful",
+                                "status": 'success'})
 
 
 
+#Upload task
+@app.route('/taskupload',methods =['POST'])
+def update_tasks():
+    id = request.json["id"]
+    task = request.json["task"]
+    i=int(id)
 
+
+    #cur.execute('UPDATE Users SET name = (name||?|| ?) WHERE id = ?', (',', a, 5))
+
+    cur.execute('SELECT tasks FROM projects WHERE id="%s"'%(i))
+
+    for et in cur:
+        print(et)
+        for q in et:
+            print(q)
+            if q != None:
+                cur.execute('UPDATE tasks SET documents = (?|| ?||tasks) WHERE id = ?', (task,',', i))
+                conn.commit()
+                return jsonify({"data": "update sucessfullll"})
+
+            if q == None:
+                cur.execute('UPDATE projects SET documents = ? WHERE id = ?', (task, id))
+                conn.commit()
+                return jsonify({"data": "update sucessful",
+                                "status": 'success'})
 
 #returns all project names and details
 @app.route('/getprojects',methods =['GET'])
@@ -182,24 +208,86 @@ def get_articles():
     for i in b2:
          ls.append({"id":i[0],"name":i[1],"details":i[2]})
     print(ls)
+    print(len(ls))
     return jsonify({"data": ls})
 
 #returns all info
-@app.route('/getprojectinfo',methods =['GET'])
-def get_info():
+@app.route('/getprojectimgs',methods =['GET'])
+def get_imgs():
     id = request.json["id"]
     i = int(id)
-    b2=cur.execute('SELECT documents,photos FROM projects WHERE id="%s"'%(i))
+    b2=cur.execute('SELECT photos FROM projects WHERE id="%s"'%(i))
+
     ls = []
+    s=''
     for j in b2:
         for i in j:
-            ls.append(i)
-        r = ls[0]
-        t = ls[1]
-        print(ls)
-        return jsonify({"documents": r,
-                        "images":t})
+            s=i
+            #ls.append(i)
+    e = s.split(',')
+    #length = len(e)
+    d=0
+    for t in e:
+            ls.append({"id": d, "images":t})
+            d=d+1
 
+
+    print(ls)
+    print(len(e))
+    print(e)
+
+    return jsonify({"data":ls})
+
+@app.route('/getprojectdocs',methods =['GET'])
+def get_docs():
+    id = request.json["id"]
+    i = int(id)
+    b2=cur.execute('SELECT documents FROM projects WHERE id="%s"'%(i))
+
+    ls = []
+    s = ''
+    for j in b2:
+        for i in j:
+            s = i
+            # ls.append(i)
+    e = s.split(',')
+    # length = len(e)
+    d = 0
+    for t in e:
+        ls.append({"id": d, "documents": t})
+        d = d + 1
+
+    print(ls)
+    print(len(e))
+    print(e)
+
+    return jsonify({"data": ls})
+
+
+@app.route('/getprojecttask', methods=['GET'])
+def get_tasks():
+    id = request.json["id"]
+    i = int(id)
+    b2 = cur.execute('SELECT tasks FROM projects WHERE id="%s"' % (i))
+
+    ls = []
+    s = ''
+    for j in b2:
+        for i in j:
+            s = i
+            # ls.append(i)
+    e = s.split(',')
+    # length = len(e)
+    d = 0
+    for t in e:
+        ls.append({"id": d, "documents": t})
+        d = d + 1
+
+    print(ls)
+    print(len(e))
+    print(e)
+
+    return jsonify({"data": ls})
 
 if __name__ == '__main__':
     app.run(debug=True)
