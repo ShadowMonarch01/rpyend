@@ -227,7 +227,7 @@ def get_imgs():
             print(q)
             if q == None:
 
-                return jsonify({"data": "NONE"})
+                return jsonify({"status": "NONE"})
 
             if q != None:
                 for j in b2:
@@ -268,7 +268,7 @@ def get_docs():
         for q in et:
             print(q)
             if q == None:
-                return jsonify({"data": "NONE"})
+                return jsonify({"status": "NONE"})
 
             if q != None:
                 for j in b2:
