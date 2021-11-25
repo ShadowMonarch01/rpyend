@@ -219,24 +219,40 @@ def get_imgs():
     b2=cur.execute('SELECT photos FROM projects WHERE id="%s"'%(i))
 
     ls = []
-    s=''
-    for j in b2:
-        for i in j:
-            s=i
-            #ls.append(i)
-    e = s.split(',')
-    #length = len(e)
-    d=0
-    for t in e:
-            ls.append({"id": d, "images":t})
-            d=d+1
+    s = ''
+
+    for et in cur:
+        print(et)
+        for q in et:
+            print(q)
+            if q == None:
+
+                return jsonify({"data": "NONE"})
+
+            if q != None:
+                for j in b2:
+                    for i in j:
+                        s = i
+                        # ls.append(i)
+                e = s.split(',')
+                # length = len(e)
+                d = 0
+                for t in e:
+                    ls.append({"id": d, "images": t})
+                    d = d + 1
+
+                print(ls)
+                print(len(e))
+                print(e)
+
+                return jsonify({"data": ls})
 
 
-    print(ls)
-    print(len(e))
-    print(e)
 
-    return jsonify({"data":ls})
+    ####################################
+
+
+
 
 @app.route('/getprojectdocs',methods =['POST'])
 def get_docs():
@@ -246,22 +262,31 @@ def get_docs():
 
     ls = []
     s = ''
-    for j in b2:
-        for i in j:
-            s = i
-            # ls.append(i)
-    e = s.split(',')
-    # length = len(e)
-    d = 0
-    for t in e:
-        ls.append({"id": d, "documents": t})
-        d = d + 1
 
-    print(ls)
-    print(len(e))
-    print(e)
+    for et in cur:
+        print(et)
+        for q in et:
+            print(q)
+            if q == None:
+                return jsonify({"data": "NONE"})
 
-    return jsonify({"data": ls})
+            if q != None:
+                for j in b2:
+                    for i in j:
+                        s = i
+                        # ls.append(i)
+                e = s.split(',')
+                # length = len(e)
+                d = 0
+                for t in e:
+                    ls.append({"id": d, "documents": t})
+                    d = d + 1
+
+                print(ls)
+                print(len(e))
+                print(e)
+
+                return jsonify({"data": ls})
 
 
 @app.route('/getprojecttask', methods=['POST'])
