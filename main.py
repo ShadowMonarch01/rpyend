@@ -148,9 +148,10 @@ def update_images():
 def update_pdfs():
     id = request.json["id"]
     documents = request.json["pdf"]
+    docname = request.json["docname"]
     i=int(id)
 
-
+    dk = documents+":"+docname
     #cur.execute('UPDATE Users SET name = (name||?|| ?) WHERE id = ?', (',', a, 5))
 
     cur.execute('SELECT documents FROM projects WHERE id="%s"'%(i))
@@ -160,12 +161,12 @@ def update_pdfs():
         for q in et:
             print(q)
             if q != None:
-                cur.execute('UPDATE projects SET documents = (?|| ?||documents) WHERE id = ?', (documents,',', i))
+                cur.execute('UPDATE projects SET documents = (?|| ?||documents) WHERE id = ?', (dk,',', i))
                 conn.commit()
                 return jsonify({"data": "update sucessfullll"})
 
             if q == None:
-                cur.execute('UPDATE projects SET documents = ? WHERE id = ?', (documents, id))
+                cur.execute('UPDATE projects SET documents = ? WHERE id = ?', (dk, id))
                 conn.commit()
                 return jsonify({"data": "update sucessful",
                                 "status": 'success'})
@@ -254,7 +255,8 @@ def get_docs():
     # length = len(e)
     d = 0
     for t in e:
-        ls.append({"id": d, "documents": t})
+        s=t.split(':')
+        ls.append({"id": d, "documents": s[0],"name":s[1]})
         d = d + 1
 
     print(ls)
@@ -288,6 +290,52 @@ def get_tasks():
     print(e)
 
     return jsonify({"data": ls})
+
+##############################
+#returns all info
+@app.route('/updpics',methods =['POST'])
+def upd_pics():
+    id = request.json["id"]
+    ids = request.json["ids"]
+    val = request.json["val"]
+    k = int(id)
+    z = int(ids)
+    b2=cur.execute('SELECT photos FROM projects WHERE id="%s"'%(k))
+
+
+
+    ls = []
+
+    ps=[]
+
+    s=''
+    for j in b2:
+        for i in j:
+            s=i
+            #ls.append(i)
+    e = s.split(',')
+    e[z]= val
+    h= ','.join(str(x) for x in e)
+
+
+    cur.execute('UPDATE projects SET photos = ? WHERE id = ? ', (h,k,))
+    conn.commit()
+
+
+
+    #length = len(e)
+    d=0
+    for t in e:
+            ls.append({"id": d, "images":t})
+            d=d+1
+
+
+    print(ls)
+    print(len(e))
+    print(e)
+
+    return jsonify({"data":ls})
+##############################
 
 if __name__ == '__main__':
     app.run(debug=True)
