@@ -163,7 +163,8 @@ def update_pdfs():
             if q != None:
                 cur.execute('UPDATE projects SET documents = (?|| ?||documents) WHERE id = ?', (dk,',', i))
                 conn.commit()
-                return jsonify({"data": "update sucessfullll"})
+                return jsonify({"data": "update sucessfullll",
+                                "status": 'success'})
 
             if q == None:
                 cur.execute('UPDATE projects SET documents = ? WHERE id = ?', (dk, id))
