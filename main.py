@@ -79,7 +79,7 @@ def login_user():
 
     return jsonify({
         "id": user.id,
-        "email": user.email,
+        "name": user.name,
         "propic": user.profilepic,
         "about": user.about,
         "phone": user.phone,
