@@ -78,12 +78,12 @@ def login_user():
     access_token = create_access_token(identity=user.email)
 
     return jsonify({
-        "id": user.id,
+        "id": str(user.id),
         "name": user.name,
         "propic": user.profilepic,
         "about": user.about,
         "phone": user.phone,
-        "adm": user.adm,
+        "adm": str(user.adm),
         "token": access_token,
         "status": 'success'
     })
