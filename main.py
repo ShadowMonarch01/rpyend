@@ -22,8 +22,8 @@ bcrypt = Bcrypt(app)
 db.init_app(app)
 
 
-#with app.app_context():
-   # db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 
@@ -80,6 +80,9 @@ def login_user():
     return jsonify({
         "id": user.id,
         "email": user.email,
+        "propic": user.profilepic,
+        "about": user.about,
+        "phone": user.phone,
         "adm": user.adm,
         "token": access_token,
         "status": 'success'
