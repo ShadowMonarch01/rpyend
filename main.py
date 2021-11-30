@@ -362,7 +362,8 @@ def update_image():
             tt = p
     print(tt)
     return jsonify({
-        "propic":tt
+        "propic":tt,
+        "status": 'success'
     })
 #######################
 
@@ -394,7 +395,8 @@ def update_data():
         "name":tt[0],
         "about":tt[1],
         "phone":tt[2],
-        "adm":str(bool(tt[3]))
+        "adm":str(bool(tt[3])),
+        "status": 'success'
     })
 ######################
 
