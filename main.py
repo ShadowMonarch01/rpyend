@@ -341,6 +341,63 @@ def upd_pics():
     return jsonify({"data":ls})
 ##############################
 
+
+########################
+@app.route("/updateproimage", methods= ["POST"])
+def update_image():
+    id = request.json["id"]
+    img = request.json["image"]
+
+    i=int(id)
+
+
+    cur.execute('UPDATE users SET profilepic = ? WHERE id = ? ', (img,i,))
+    conn.commit()
+
+    b2 = cur.execute('SELECT profilepic FROM users WHERE id="%s"' % (i))
+
+    tt=''
+    for s in b2:
+        for p in s:
+            tt = p
+    print(tt)
+    return jsonify({
+        "propic":tt
+    })
+#######################
+
+######################
+@app.route("/updateprodata", methods= ["POST"])
+def update_data():
+    id = request.json["id"]
+    name = request.json["name"]
+    info = request.json["info"]
+    phone = request.json["phone"]
+
+    i=int(id)
+
+
+    cur.execute('UPDATE users SET name = ? ,about = ? ,phone = ? WHERE id = ? ', (name,info,phone,i,))
+    conn.commit()
+
+    b2 = cur.execute('SELECT name,about,phone,adm FROM users WHERE id="%s"' % (i))
+
+    tt=[]
+
+    for s in b2:
+         for e in s:
+
+            tt.append(e)
+
+    print(tt)
+    return jsonify({
+        "name":tt[0],
+        "about":tt[1],
+        "phone":tt[2],
+        "adm":str(bool(tt[3]))
+    })
+######################
+
 if __name__ == '__main__':
     app.run(debug=True)
 
