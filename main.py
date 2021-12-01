@@ -194,12 +194,12 @@ def update_tasks():
         for q in et:
             print(q)
             if q != None:
-                cur.execute('UPDATE tasks SET documents = (?|| ?||tasks) WHERE id = ?', (task,',', i))
+                cur.execute('UPDATE projects SET tasks = (?|| ?||tasks) WHERE id = ?', (task,',', i))
                 conn.commit()
                 return jsonify({"data": "update sucessfullll"})
 
             if q == None:
-                cur.execute('UPDATE projects SET documents = ? WHERE id = ?', (task, id))
+                cur.execute('UPDATE projects SET tasks = ? WHERE id = ?', (task, id))
                 conn.commit()
                 return jsonify({"data": "update sucessful",
                                 "status": 'success'})
@@ -286,7 +286,7 @@ def get_tasks():
     # length = len(e)
     d = 0
     for t in e:
-        ls.append({"id": d, "documents": t})
+        ls.append({"id": d, "task": t})
         d = d + 1
 
     print(ls)
