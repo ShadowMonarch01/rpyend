@@ -196,7 +196,8 @@ def update_tasks():
             if q != None:
                 cur.execute('UPDATE projects SET tasks = (?|| ?||tasks) WHERE id = ?', (task,',', i))
                 conn.commit()
-                return jsonify({"data": "update sucessfullll"})
+                return jsonify({"data": "update sucessfullll",
+                                "status": 'success'})
 
             if q == None:
                 cur.execute('UPDATE projects SET tasks = ? WHERE id = ?', (task, id))
