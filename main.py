@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
-from models import db,Users,Projects
+from models import db,Users,Projects,Agenda
 import sqlite3 as sql
 
 app = Flask(__name__)
@@ -205,6 +205,76 @@ def update_tasks():
                 return jsonify({"data": "update sucessful",
                                 "status": 'success'})
 
+
+#Agendas Upload
+@app.route('/agendaupload',methods =['POST'])
+def update_agenda():
+    date = request.json["date"]
+    jobn = request.json["jobn"]
+    task = request.json["task"]
+    sta = request.json["sta"]
+    sto = request.json["sto"]
+    dby = request.json["dby"]
+    upti =[]
+    upti.append({"kr":jobn,"jjk":task,"fyjrd":sta,"sto":sto,"dfgae":dby})
+
+    agds = Agenda.query.filter_by(projectname=date).first() is not None
+
+    if agds:
+        #abort(409)
+        #return jsonify({"msg": "adenda exists"})
+        cur.execute('SELECT asname  FROM agenda WHERE projectname= "%s"' % (date))
+        ttt = ''
+        #print(cur)
+        for p in cur:
+            print(p)
+            for s in p:
+                #ttt = s
+                print(s)
+
+                if s == None:
+                    cur.execute('UPDATE agenda SET asname = ? WHERE projectname = ?', (str(upti), date))
+                    return jsonify({"data": "Something went wromg",
+                                   "update": "The new update was sucessful",
+                                    "status": 'success'})
+                if s != None:
+                    cur.execute('UPDATE agenda SET asname = (?|| ?||asname) WHERE projectname = ?', (str(upti), '*****', date))
+                    conn.commit()
+                    return jsonify({"data": s,
+                                   "update":"Successful",
+                                    "status": 'success'})
+    new_agenda = Agenda(projectname=date, asname=upti)
+    db.session.add(new_agenda)
+    db.session.commit()
+
+    return jsonify({"data": "update sucessful",
+                    "status": "Its a new one"})
+
+
+
+
+    #cur.execute('UPDATE Users SET name = (name||?|| ?) WHERE id = ?', (',', a, 5))
+
+    # cur.execute('SELECT asname  FROM agenda WHERE projectname= "%s"' % (date))
+
+    #cur.execute('SELECT  FROM projects WHERE id="%s"'%(i))
+
+    # for et in cur:
+    #     print(et)
+    #     for q in et:
+    #         print(q)
+    #         if q != None:
+    #             cur.execute('UPDATE projects SET tasks = (?|| ?||tasks) WHERE id = ?', (task,',', i))
+    #             conn.commit()
+    #             return jsonify({"data": "update sucessfullll",
+    #                             "status": 'success'})
+    #
+    #         if q == None:
+    #             cur.execute('UPDATE projects SET tasks = ? WHERE id = ?', (task, id))
+    #             conn.commit()
+    #             return jsonify({"data": "update sucessful",
+    #                             "status": 'success'})
+
 #returns all project names and details
 @app.route('/getprojects',methods =['GET'])
 def get_articles():
@@ -400,6 +470,98 @@ def update_data():
         "status": 'success'
     })
 ######################
+
+#####################
+# #returns all project names and details
+@app.route('/getagendas',methods =['GET'])
+def get_agendas():
+    b2 = cur.execute('SELECT projectname,asname FROM agenda')
+    ls = []
+    bs = []
+    vv= []
+    s=''
+    e=''
+    t=''
+    for i in b2:
+        s= i[1]
+        x=s.split('*****')
+        # for z in x:
+        #     t=str(z).split('|')
+        #     #for ww in t:
+        #     vv.append({"Project":t[0],"task":t[1]})
+
+
+
+
+        bs.append(i)
+        for qq in bs:
+            print(qq)
+    for c in bs:
+        d= str(c[1]).split('*****')
+        #for hh in d:
+        #  g = str(hh).split('|')
+
+        vv.append({c[0]:d})
+    for dd in vv:
+        ls.append(dd)
+
+    print(vv)
+    print(len(vv))
+    return jsonify({"info":vv})
+
+
+
+
+
+# #returns all project names and details
+# @app.route('/getagendas',methods =['GET'])
+# def get_agendas():
+#     b2 = cur.execute('SELECT projectname FROM agenda')
+#     ls = []
+#     bs = []
+#     for i in b2:
+#      ls.append(i)
+#
+#      bs.append(ls)
+#
+#     b3 = cur.execute('SELECT asname FROM agenda')
+#     #
+#     vv= []
+#     # s=''
+#     # e=''
+#     # t=''
+#     for s in b3:
+#         for qqs in s:
+#     #     s= i[1]
+#          x=qqs.split('*****')
+#          for z in x:
+#            t=str(z).split('|')
+#     #     #     #for ww in t:
+#            vv.append({"Project":t[0],"task":t[1]})
+#     kk=[]
+#     #
+#     #
+#     #
+#     #
+#     #     bs.append(i)
+#     #     for qq in bs:
+#     #         print(qq)
+#     # for c in bs:
+#     #     d= str(c[1]).split('*****')
+#     #     for hh in d:
+#     #      g = str(hh).split('|')
+#     #
+#     #      vv.append({c[0]:[{"name":g[0]}]})
+#     #
+#     #
+#     for e in bs:
+#         for o in vv:
+#             kk.append({"first":e,"second":o})
+#
+#     print(ls)
+#     print(len(ls))
+#     return jsonify({"info":kk})
+# ####################
 
 if __name__ == '__main__':
     app.run(debug=True)
