@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from models import db,Users,Projects,Agenda
 import sqlite3 as sql
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///company.db'
@@ -215,8 +216,8 @@ def update_agenda():
     sta = request.json["sta"]
     sto = request.json["sto"]
     dby = request.json["dby"]
-    upti =[]
-    upti.append({"kr":jobn,"jjk":task,"fyjrd":sta,"sto":sto,"dfgae":dby})
+
+    upti= {"kr":jobn,"jjk":task,"fyjrd":sta,"sto":sto,"dfgae":dby}
 
     agds = Agenda.query.filter_by(projectname=date).first() is not None
 
@@ -233,17 +234,17 @@ def update_agenda():
                 print(s)
 
                 if s == None:
-                    cur.execute('UPDATE agenda SET asname = ? WHERE projectname = ?', (str(upti), date))
+                    cur.execute('UPDATE agenda SET asname = ? WHERE projectname = ?', (json.dumps(upti), date))
                     return jsonify({"data": "Something went wromg",
                                    "update": "The new update was sucessful",
                                     "status": 'success'})
                 if s != None:
-                    cur.execute('UPDATE agenda SET asname = (?|| ?||asname) WHERE projectname = ?', (str(upti), '*****', date))
+                    cur.execute('UPDATE agenda SET asname = (?|| ?||asname) WHERE projectname = ?', (json.dumps(upti), '*****', date))
                     conn.commit()
                     return jsonify({"data": s,
                                    "update":"Successful",
                                     "status": 'success'})
-    new_agenda = Agenda(projectname=date, asname=upti)
+    new_agenda = Agenda(projectname=date, asname=json.dumps(upti))
     db.session.add(new_agenda)
     db.session.commit()
 
@@ -478,13 +479,14 @@ def get_agendas():
     b2 = cur.execute('SELECT projectname,asname FROM agenda')
     ls = []
     bs = []
-    vv= []
+    vv= {}
     s=''
     e=''
     t=''
+    bz=[]
     for i in b2:
         s= i[1]
-        x=s.split('*****')
+        #x=s.split('*****')
         # for z in x:
         #     t=str(z).split('|')
         #     #for ww in t:
@@ -498,12 +500,16 @@ def get_agendas():
             print(qq)
     for c in bs:
         d= str(c[1]).split('*****')
+        ww=[]
+        for ss in d:
+         ww.append(eval(ss))
         #for hh in d:
         #  g = str(hh).split('|')
 
-        vv.append({c[0]:d})
-    for dd in vv:
-        ls.append(dd)
+        #vv.append({c[0]:ww})
+        vv[c[0]]=ww
+    # for dd in vv:
+    #     ls.append(dd)
 
     print(vv)
     print(len(vv))
