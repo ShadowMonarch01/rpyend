@@ -217,7 +217,30 @@ def update_agenda():
     sto = request.json["sto"]
     dby = request.json["dby"]
 
-    upti= {"kr":jobn,"jjk":task,"fyjrd":sta,"sto":sto,"dfgae":dby}
+    ######## REMOVE FROM TASK STARTED ###########
+    projid = request.json["projid"]
+    taskid = request.json["taskid"]
+
+    id = int(projid)
+    u = int(taskid)
+
+    b2 = cur.execute('SELECT tasks FROM projects WHERE id="%s"' % (id))
+
+    s = ''
+    for j in b2:
+        for i in j:
+            s = i
+            # ls.append(i)
+    e = s.split(',')
+    e.pop(u)
+    # s = e
+    h = ','.join(str(x) for x in e)
+
+    cur.execute('UPDATE projects SET tasks = ? WHERE id = ?', (h, id))
+    conn.commit()
+    ####### REMOVE FROM TASK FINISHED ##################
+
+    upti= {"kr":jobn,"name":task,"fyjrd":sta,"sto":sto,"dfgae":dby}
 
     agds = Agenda.query.filter_by(projectname=date).first() is not None
 
@@ -247,9 +270,12 @@ def update_agenda():
     new_agenda = Agenda(projectname=date, asname=json.dumps(upti))
     db.session.add(new_agenda)
     db.session.commit()
+    ######## REMOVE FROM TASK
+
+
 
     return jsonify({"data": "update sucessful",
-                    "status": "Its a new one"})
+                    "status": "success"})
 
 
 
@@ -568,6 +594,47 @@ def get_agendas():
 #     print(len(ls))
 #     return jsonify({"info":kk})
 # ####################
+
+####### UPDATE TASK
+@app.route('/updateatask', methods=['POST'])
+def upde_tasks():
+    id = request.json["id"]
+    ids = request.json["ids"]
+    i = int(id)
+    u = int(ids)
+    b2 = cur.execute('SELECT tasks FROM projects WHERE id="%s"' % (i))
+
+    ls = []
+    s = ''
+    for j in b2:
+        for i in j:
+            s = i
+            # ls.append(i)
+    e = s.split(',')
+    e.pop(u)
+    s=e
+    h = ','.join(str(x) for x in e)
+
+    cur.execute('UPDATE projects SET tasks = ? WHERE id = ?', (h, id))
+    conn.commit()
+
+    #e.pop(0)
+
+    # for zz in e:
+    #
+    #     cur.execute('UPDATE projects SET tasks = (tasks|| ?||?) WHERE id = ?', (',',zz, id))
+    #     conn.commit()
+    # length = len(e)
+    # d = 0
+    # for t in e:
+    #     ls.append({"id": d, "task": t})
+    #     d = d + 1
+    #
+    # print(ls)
+    # print(len(e))
+    # print(e)
+
+    return jsonify({"data": s})
 
 if __name__ == '__main__':
     app.run(debug=True)
